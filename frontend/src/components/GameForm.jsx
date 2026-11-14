@@ -7,6 +7,22 @@ const MIN_YEAR = 1950;
 /** Maior ano aceito: o ano atual + 5, para permitir jogos já anunciados. */
 const MAX_YEAR = new Date().getFullYear() + 5;
 
+/** Gêneros disponíveis no cadastro, para padronizar os dados. */
+const GENRES = [
+  "Ação",
+  "Aventura",
+  "Corrida",
+  "Esportes",
+  "Estratégia",
+  "Luta",
+  "Plataforma",
+  "Puzzle",
+  "RPG",
+  "Simulação",
+  "Terror",
+  "Tiro",
+];
+
 /** Valores dos campos do formulário vazio. */
 const EMPTY_GAME = { name: "", genre: "", year: "" };
 
@@ -151,6 +167,13 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
     setGame((previousGame) => ({ ...previousGame, [name]: value }));
   };
 
+  // Jogos cadastrados antes da lista fixa podem ter um gênero fora dela;
+  // mantém esse valor como opção para ele não sumir ao editar.
+  const genreOptions =
+    game.genre === "" || GENRES.includes(game.genre)
+      ? GENRES
+      : [...GENRES, game.genre];
+
   return (
     // noValidate: as mensagens de erro são exibidas pelo próprio componente.
     <form onSubmit={handleSubmit} noValidate>
@@ -173,17 +196,22 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
 
       <div>
         <label htmlFor="genre">Gênero </label>
-        <input
-          type="text"
+        <select
           name="genre"
           id="genre"
           required
-          autoComplete="off"
           value={game.genre}
           onChange={handleChange}
           aria-invalid={Boolean(fieldErrors.genre)}
           aria-describedby={fieldErrors.genre ? "genre-error" : undefined}
-        />
+        >
+          <option value="">Selecione...</option>
+          {genreOptions.map((genre) => (
+            <option key={genre} value={genre}>
+              {genre}
+            </option>
+          ))}
+        </select>
         {fieldErrors.genre && <p id="genre-error" role="alert">{fieldErrors.genre}</p>}
       </div>
       <div>
