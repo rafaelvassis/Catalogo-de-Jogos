@@ -29,6 +29,7 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
     year: gameBeingEdited?.year ?? "",
   });
 
+  const [fieldErrors, setFieldErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,27 +41,29 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
    * Valida os dados do formulário antes do envio.
    * Regras: nome e gênero não podem ficar vazios (espaços em branco não
    * contam) e o ano deve ser um número inteiro entre MIN_YEAR e MAX_YEAR.
-   * Efeito colateral: exibe um `alert` com o motivo quando a validação falha.
    *
    * @param {{name: string, genre: string, year: string | number}} game - Dados atuais do formulário.
-   * @returns {boolean} `true` se os dados são válidos; `false` caso contrário.
+   * @returns {{name?: string, genre?: string, year?: string}}
+   *   Mensagem de erro de cada campo inválido. Objeto vazio se tudo estiver válido.
    */
-  function inputValidation(game) {
-    if (!game.name.trim() || !game.genre.trim() || !game.year) {
-      alert("Preencha todos os campos");
+  function validateGame(game) {
+    const errors = {};
 
-      return false;
+    if (!game.name.trim()) errors.name = "Informe o título.";
+
+    if (!game.genre.trim()) errors.genre = "Informe o gênero.";
+
+    if (game.year === "") {
+      errors.year = "Informe o ano.";
+    } else {
+      const year = Number(game.year);
+
+      if (!Number.isInteger(year) || year < MIN_YEAR || year > MAX_YEAR) {
+        errors.year = `O ano deve ser um número inteiro entre ${MIN_YEAR} e ${MAX_YEAR}.`;
+      }
     }
 
-    const year = Number(game.year);
-
-    if (!Number.isInteger(year) || year < MIN_YEAR || year > MAX_YEAR) {
-      alert(`O ano deve ser um número inteiro entre ${MIN_YEAR} e ${MAX_YEAR}`);
-
-      return false;
-    }
-
-    return true;
+    return errors;
   }
 
   function resetForm() {
@@ -69,6 +72,7 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
       genre: "",
       year: "",
     });
+    setFieldErrors({});
 
     onFinish();
   }
@@ -90,7 +94,11 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!inputValidation(game)) return;
+    const errors = validateGame(game);
+
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) return;
 
     setSubmitError("");
     setSuccessMessage("");
@@ -136,11 +144,13 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
     const { name, value } = event.target;
 
     setSuccessMessage("");
+    setFieldErrors((previousErrors) => ({ ...previousErrors, [name]: undefined }));
     setGame((previousGame) => ({ ...previousGame, [name]: value }));
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    // noValidate: as mensagens de erro são exibidas pelo próprio componente.
+    <form onSubmit={handleSubmit} noValidate>
       <div>
         <label htmlFor="name">Título </label>
         <input
@@ -150,7 +160,10 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
           ref={nameInputRef}
           value={game.name}
           onChange={handleChange}
+          aria-invalid={Boolean(fieldErrors.name)}
+          aria-describedby={fieldErrors.name ? "name-error" : undefined}
         />
+        {fieldErrors.name && <p id="name-error" role="alert">{fieldErrors.name}</p>}
       </div>
 
       <div>
@@ -161,7 +174,10 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
           id="genre"
           value={game.genre}
           onChange={handleChange}
+          aria-invalid={Boolean(fieldErrors.genre)}
+          aria-describedby={fieldErrors.genre ? "genre-error" : undefined}
         />
+        {fieldErrors.genre && <p id="genre-error" role="alert">{fieldErrors.genre}</p>}
       </div>
       <div>
         <label htmlFor="year">Ano </label>
@@ -174,7 +190,10 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
           step={1}
           value={game.year}
           onChange={handleChange}
+          aria-invalid={Boolean(fieldErrors.year)}
+          aria-describedby={fieldErrors.year ? "year-error" : undefined}
         />
+        {fieldErrors.year && <p id="year-error" role="alert">{fieldErrors.year}</p>}
       </div>
       <button type="submit" disabled={isSubmitting}>
         {isSubmitting
