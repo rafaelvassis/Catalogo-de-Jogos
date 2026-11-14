@@ -7,7 +7,18 @@ const MIN_YEAR = 1950;
 /** Maior ano aceito: o ano atual + 5, para permitir jogos já anunciados. */
 const MAX_YEAR = new Date().getFullYear() + 5;
 
-export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
+/**
+ * Formulário para cadastrar um jogo novo ou editar um existente.
+ *
+ * @param {Object} props
+ * @param {{id: number, name: string, genre: string, year: number} | null} props.gameBeingEdited
+ *   Jogo em edição, ou `null` quando o formulário está no modo de cadastro.
+ * @param {() => void} props.onFinish
+ *   Chamado ao sair do modo de edição (depois de salvar ou ao cancelar).
+ * @param {() => Promise<void>} props.fetchGames
+ *   Recarrega a lista de jogos depois de salvar.
+ */
+export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
   const [game, setGame] = useState({
     name: "",
     genre: "",
@@ -66,7 +77,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
       year: "",
     });
 
-    setGameBeingEdited(null);
+    onFinish();
   }
 
   

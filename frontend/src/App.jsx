@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Formulary } from "./components/Formulary";
+import { GameForm } from "./components/GameForm";
 import { GameCard } from "./components/GameCard";
 import { getGames, deleteGame } from "./services/gameService";
 
@@ -41,9 +41,9 @@ function App() {
         ))}
       </div>
       <br />
-      <Formulary
+      <GameForm
         gameBeingEdited={gameBeingEdited}
-        setGameBeingEdited={setGameBeingEdited}
+        onFinish={() => setGameBeingEdited(null)}
         fetchGames={fetchGames}
       />
     </>
