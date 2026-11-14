@@ -9,6 +9,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   });
 
   const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (gameBeingEdited) {
@@ -60,6 +61,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
     if (!inputValidation(game)) return;
 
     setSubmitError("");
+    setIsSubmitting(true);
 
     try {
       if (gameBeingEdited) {
@@ -72,6 +74,8 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
       resetForm();
     } catch {
       setSubmitError("Não foi possível salvar o jogo. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -114,8 +118,12 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
           onChange={handleChange}
         />
       </div>
-      <button type="submit">
-        {gameBeingEdited ? "Atualizar Jogo" : "Adicionar Jogo"}
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting
+          ? "Salvando..."
+          : gameBeingEdited
+            ? "Atualizar Jogo"
+            : "Adicionar Jogo"}
       </button>
 
       {submitError && <p role="alert">{submitError}</p>}
