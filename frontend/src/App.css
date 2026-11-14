@@ -251,6 +251,15 @@
   border-radius: var(--radius);
 }
 
+.games__error {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
 /* ---------- Card de jogo (capa + texto, sem caixa) ---------- */
 
 .game-card {

@@ -13,11 +13,19 @@ function App() {
   // Se o formulário deve focar o título ao ser remontado (botão "Adicionar jogo").
   const [focusName, setFocusName] = useState(false);
 
+  // Se a última tentativa de carregar a lista falhou (sem rede, API fora do ar).
+  const [loadError, setLoadError] = useState(false);
+
   // Fetch games from backend API
   const fetchGames = async () => {
-    const games = await getGames();
+    try {
+      const games = await getGames();
 
-    setGameList(games);
+      setGameList(games);
+      setLoadError(false);
+    } catch {
+      setLoadError(true);
+    }
   };
 
   // Render games list
@@ -86,11 +94,29 @@ function App() {
           />
 
           <section className="games" aria-labelledby="page-title">
+            {loadError && (
+              <div className="games__empty games__error" role="alert">
+                <p>
+                  Não foi possível carregar os jogos. Verifique a conexão e se
+                  o servidor está no ar.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  onClick={fetchGames}
+                >
+                  Tentar novamente
+                </button>
+              </div>
+            )}
+
             {gameList.length === 0 ? (
-              <p className="games__empty">
-                Nenhum jogo cadastrado ainda. Use o formulário para adicionar
-                o primeiro!
-              </p>
+              !loadError && (
+                <p className="games__empty">
+                  Nenhum jogo cadastrado ainda. Use o formulário para adicionar
+                  o primeiro!
+                </p>
+              )
             ) : (
               <ul className="games__list">
                 {gameList.map((game) => (
