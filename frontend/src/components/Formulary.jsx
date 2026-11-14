@@ -23,7 +23,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
 
   function inputValidation(game) {
     if (!game.name || !game.genre || !game.year) {
-      alert("Complete all fields");
+      alert("Preencha todos os campos");
 
       return false;
     }
@@ -68,7 +68,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="name">Title </label>
+        <label htmlFor="name">Título </label>
         <input
           type="text"
           name="name"
@@ -79,7 +79,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
       </div>
 
       <div>
-        <label htmlFor="genre">Genre </label>
+        <label htmlFor="genre">Gênero </label>
         <input
           type="text"
           name="genre"
@@ -89,7 +89,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
         />
       </div>
       <div>
-        <label htmlFor="year">Year </label>
+        <label htmlFor="year">Ano </label>
         <input
           type="number"
           name="year"
@@ -99,7 +99,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
         />
       </div>
       <button type="submit">
-        {gameBeingEdited ? "Update Game" : "Add Game"}
+        {gameBeingEdited ? "Atualizar Jogo" : "Adicionar Jogo"}
       </button>
     </form>
   );
