@@ -63,11 +63,14 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
     setSubmitError("");
     setIsSubmitting(true);
 
+    // O input guarda o ano como string; a API espera um número.
+    const gameToSend = { ...game, year: Number(game.year) };
+
     try {
       if (gameBeingEdited) {
-        await updateGame(gameBeingEdited.id, game);
+        await updateGame(gameBeingEdited.id, gameToSend);
       } else {
-        await createGame(game);
+        await createGame(gameToSend);
       }
 
       await fetchGames();
