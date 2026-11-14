@@ -107,6 +107,19 @@ function App() {
           </section>
         </main>
       </div>
+
+      <footer className="footer">
+        <p>
+          © 2026 · Game Catalog | Desenvolvido por{" "}
+          <a
+            href="https://github.com/rafaelvassis"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Rafael Vassis
+          </a>
+        </p>
+      </footer>
     </>
   );
 }
