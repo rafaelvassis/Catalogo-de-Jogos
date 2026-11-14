@@ -65,7 +65,8 @@ export async function deleteGame(idToDelete) {
       throw new Error(`Request error: ${response.status} `);
     }
 
-    return await response.json();
+    // O corpo da resposta não é lido: o chamador só precisa saber se deu certo,
+    // e uma resposta 204 (sem corpo) faria o parse do JSON falhar.
   } catch (error) {
     console.error("Deletion failure: ", error);
     throw error;
