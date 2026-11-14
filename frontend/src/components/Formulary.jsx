@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { createGame, updateGame } from "../services/gameService";
 
+const MIN_YEAR = 1950;
+// Permite anos futuros para jogos já anunciados.
+const MAX_YEAR = new Date().getFullYear() + 5;
+
 export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   const [game, setGame] = useState({
     name: "",
@@ -25,8 +29,16 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   // Utils ↓  ↓  ↓  ↓  ↓
 
   function inputValidation(game) {
-    if (!game.name || !game.genre || !game.year) {
+    if (!game.name.trim() || !game.genre.trim() || !game.year) {
       alert("Preencha todos os campos");
+
+      return false;
+    }
+
+    const year = Number(game.year);
+
+    if (!Number.isInteger(year) || year < MIN_YEAR || year > MAX_YEAR) {
+      alert(`O ano deve ser um número inteiro entre ${MIN_YEAR} e ${MAX_YEAR}`);
 
       return false;
     }
@@ -64,7 +76,11 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
     setIsSubmitting(true);
 
     // O input guarda o ano como string; a API espera um número.
-    const gameToSend = { ...game, year: Number(game.year) };
+    const gameToSend = {
+      name: game.name.trim(),
+      genre: game.genre.trim(),
+      year: Number(game.year),
+    };
 
     try {
       if (gameBeingEdited) {
@@ -117,6 +133,9 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
           type="number"
           name="year"
           id="year"
+          min={MIN_YEAR}
+          max={MAX_YEAR}
+          step={1}
           value={game.year}
           onChange={handleChange}
         />
