@@ -10,7 +10,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        // 5173: npm run dev | 4173: npm run preview (build de produção local)
+        policy.WithOrigins("http://localhost:5173", "http://localhost:4173")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
