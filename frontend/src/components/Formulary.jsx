@@ -111,6 +111,12 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
     }
   };
 
+  /** Sai do modo de edição, descartando as alterações e limpando o formulário. */
+  const handleCancel = () => {
+    setSubmitError("");
+    resetForm();
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -160,6 +166,12 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
             ? "Atualizar Jogo"
             : "Adicionar Jogo"}
       </button>
+
+      {gameBeingEdited && (
+        <button type="button" onClick={handleCancel} disabled={isSubmitting}>
+          Cancelar
+        </button>
+      )}
 
       {submitError && <p role="alert">{submitError}</p>}
     </form>
