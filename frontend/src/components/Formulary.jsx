@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { createGame, updateGame } from "../services/gameService";
 
+/** Menor ano de lançamento aceito no cadastro. */
 const MIN_YEAR = 1950;
-// Permite anos futuros para jogos já anunciados.
+
+/** Maior ano aceito: o ano atual + 5, para permitir jogos já anunciados. */
 const MAX_YEAR = new Date().getFullYear() + 5;
 
 export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
@@ -28,6 +30,15 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
 
   // Utils ↓  ↓  ↓  ↓  ↓
 
+  /**
+   * Valida os dados do formulário antes do envio.
+   * Regras: nome e gênero não podem ficar vazios (espaços em branco não
+   * contam) e o ano deve ser um número inteiro entre MIN_YEAR e MAX_YEAR.
+   * Efeito colateral: exibe um `alert` com o motivo quando a validação falha.
+   *
+   * @param {{name: string, genre: string, year: string | number}} game - Dados atuais do formulário.
+   * @returns {boolean} `true` se os dados são válidos; `false` caso contrário.
+   */
   function inputValidation(game) {
     if (!game.name.trim() || !game.genre.trim() || !game.year) {
       alert("Preencha todos os campos");
@@ -61,8 +72,10 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
 
   /**
    * Valida e envia o formulário: atualiza o jogo em edição ou cria um novo.
-   * Em caso de sucesso, recarrega a lista e limpa o formulário. Em caso de
-   * falha na API, exibe uma mensagem de erro e mantém os dados digitados.
+   * Nome e gênero são enviados sem espaços nas pontas e o ano como número.
+   * Enquanto a requisição está em andamento, o botão fica desabilitado.
+   * Em caso de sucesso, recarrega a lista e limpa o formulário. 
+   * Em caso de falha na API, exibe uma mensagem de erro e mantém os dados digitados.
    *
    * @param {React.SubmitEvent<HTMLFormElement>} event - Evento de envio do formulário.
    * @returns {Promise<void>}
