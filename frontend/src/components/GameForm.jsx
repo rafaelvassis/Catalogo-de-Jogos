@@ -176,7 +176,11 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
 
   return (
     // noValidate: as mensagens de erro são exibidas pelo próprio componente.
-    <form onSubmit={handleSubmit} noValidate>
+    <form onSubmit={handleSubmit} noValidate aria-labelledby="game-form-title">
+      <h2 id="game-form-title">
+        {gameBeingEdited ? "Editar jogo" : "Novo jogo"}
+      </h2>
+
       <div>
         <label htmlFor="name">Título </label>
         <input
