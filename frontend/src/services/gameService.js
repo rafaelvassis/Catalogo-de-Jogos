@@ -1,4 +1,7 @@
-const API_URL = "http://localhost:5224/games";
+// Endereço base da API. Defina VITE_API_URL em um arquivo .env para mudar;
+// sem ele, usa o backend local de desenvolvimento.
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5224";
+const API_URL = `${API_BASE_URL}/games`;
 
 export async function getGames() {
   const response = await fetch(API_URL);
