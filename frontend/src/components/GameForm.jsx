@@ -7,6 +7,38 @@ const MIN_YEAR = 1950;
 /** Maior ano aceito: o ano atual + 5, para permitir jogos já anunciados. */
 const MAX_YEAR = new Date().getFullYear() + 5;
 
+/** Valores dos campos do formulário vazio. */
+const EMPTY_GAME = { name: "", genre: "", year: "" };
+
+/**
+ * Valida os dados do formulário antes do envio.
+ * Regras: nome e gênero não podem ficar vazios (espaços em branco não
+ * contam) e o ano deve ser um número inteiro entre MIN_YEAR e MAX_YEAR.
+ *
+ * @param {{name: string, genre: string, year: string | number}} game - Dados atuais do formulário.
+ * @returns {{name?: string, genre?: string, year?: string}}
+ *   Mensagem de erro de cada campo inválido. Objeto vazio se tudo estiver válido.
+ */
+function validateGame(game) {
+  const errors = {};
+
+  if (!game.name.trim()) errors.name = "Informe o título.";
+
+  if (!game.genre.trim()) errors.genre = "Informe o gênero.";
+
+  if (game.year === "") {
+    errors.year = "Informe o ano.";
+  } else {
+    const year = Number(game.year);
+
+    if (!Number.isInteger(year) || year < MIN_YEAR || year > MAX_YEAR) {
+      errors.year = `O ano deve ser um número inteiro entre ${MIN_YEAR} e ${MAX_YEAR}.`;
+    }
+  }
+
+  return errors;
+}
+
 /**
  * Formulário para cadastrar um jogo novo ou editar um existente.
  *
@@ -23,11 +55,15 @@ const MAX_YEAR = new Date().getFullYear() + 5;
 export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
   // O estado inicial vem do jogo em edição. Para trocar de jogo, o pai
   // remonta o componente mudando a `key` (veja App.jsx).
-  const [game, setGame] = useState({
-    name: gameBeingEdited?.name ?? "",
-    genre: gameBeingEdited?.genre ?? "",
-    year: gameBeingEdited?.year ?? "",
-  });
+  const [game, setGame] = useState(
+    gameBeingEdited
+      ? {
+          name: gameBeingEdited.name,
+          genre: gameBeingEdited.genre,
+          year: gameBeingEdited.year,
+        }
+      : EMPTY_GAME,
+  );
 
   const [fieldErrors, setFieldErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
@@ -37,41 +73,8 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
 
   // Utils ↓  ↓  ↓  ↓  ↓
 
-  /**
-   * Valida os dados do formulário antes do envio.
-   * Regras: nome e gênero não podem ficar vazios (espaços em branco não
-   * contam) e o ano deve ser um número inteiro entre MIN_YEAR e MAX_YEAR.
-   *
-   * @param {{name: string, genre: string, year: string | number}} game - Dados atuais do formulário.
-   * @returns {{name?: string, genre?: string, year?: string}}
-   *   Mensagem de erro de cada campo inválido. Objeto vazio se tudo estiver válido.
-   */
-  function validateGame(game) {
-    const errors = {};
-
-    if (!game.name.trim()) errors.name = "Informe o título.";
-
-    if (!game.genre.trim()) errors.genre = "Informe o gênero.";
-
-    if (game.year === "") {
-      errors.year = "Informe o ano.";
-    } else {
-      const year = Number(game.year);
-
-      if (!Number.isInteger(year) || year < MIN_YEAR || year > MAX_YEAR) {
-        errors.year = `O ano deve ser um número inteiro entre ${MIN_YEAR} e ${MAX_YEAR}.`;
-      }
-    }
-
-    return errors;
-  }
-
   function resetForm() {
-    setGame({
-      name: "",
-      genre: "",
-      year: "",
-    });
+    setGame(EMPTY_GAME);
     setFieldErrors({});
 
     onFinish();
