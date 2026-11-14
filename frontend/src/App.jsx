@@ -10,6 +10,8 @@ function App() {
   // Muda a cada clique em "Editar" para remontar o formulário, mesmo
   // quando o jogo clicado é o mesmo.
   const [formKey, setFormKey] = useState(0);
+  // Se o formulário deve focar o título ao ser remontado (botão "Adicionar jogo").
+  const [focusName, setFocusName] = useState(false);
 
   // Fetch games from backend API
   const fetchGames = async () => {
@@ -32,6 +34,7 @@ function App() {
 
   const handleEdit = (gameToEdit) => {
     setGameBeingEdited(gameToEdit);
+    setFocusName(false);
     setFormKey((key) => key + 1);
 
     // No celular o formulário fica acima da lista: leva o usuário até ele.
@@ -41,15 +44,27 @@ function App() {
       ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
+  // Cancela uma edição em andamento e deixa o formulário limpo, com o foco
+  // no título. Remontar o formulário (nova key) limpa campos e mensagens.
+  const handleNewGame = () => {
+    setGameBeingEdited(null);
+    setFocusName(true);
+    setFormKey((key) => key + 1);
+  };
+
   return (
     <>
       <header className="topbar">
         <div className="topbar__inner">
           <span className="topbar__brand">Catálogo de Jogos</span>
 
-          <a className="btn btn--primary btn--small" href="#game-form">
+          <button
+            type="button"
+            className="btn btn--primary btn--small"
+            onClick={handleNewGame}
+          >
             Adicionar jogo
-          </a>
+          </button>
         </div>
       </header>
 
@@ -65,6 +80,7 @@ function App() {
           <GameForm
             key={formKey}
             gameBeingEdited={gameBeingEdited}
+            autoFocusName={focusName}
             onFinish={() => setGameBeingEdited(null)}
             fetchGames={fetchGames}
           />
