@@ -67,8 +67,15 @@ function validateGame(game) {
  *   Chamado ao sair do modo de edição (depois de salvar ou ao cancelar).
  * @param {() => Promise<void>} props.fetchGames
  *   Recarrega a lista de jogos depois de salvar.
+ * @param {boolean} [props.autoFocusName=false]
+ *   Se `true`, o campo de título recebe o foco quando o componente é montado.
  */
-export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
+export function GameForm({
+  gameBeingEdited,
+  onFinish,
+  fetchGames,
+  autoFocusName = false,
+}) {
   // O estado inicial vem do jogo em edição. Para trocar de jogo, o pai
   // remonta o componente mudando a `key` (veja App.jsx).
   const [game, setGame] = useState(
@@ -195,6 +202,7 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
           id="name"
           required
           autoComplete="off"
+          autoFocus={autoFocusName}
           ref={nameInputRef}
           value={game.name}
           onChange={handleChange}
