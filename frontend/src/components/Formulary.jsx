@@ -46,6 +46,14 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   
   // Handles  ↓  ↓  ↓  ↓  ↓
 
+  /**
+   * Valida e envia o formulário: atualiza o jogo em edição ou cria um novo.
+   * Em caso de sucesso, recarrega a lista e limpa o formulário. Em caso de
+   * falha na API, exibe uma mensagem de erro e mantém os dados digitados.
+   *
+   * @param {React.SubmitEvent<HTMLFormElement>} event - Evento de envio do formulário.
+   * @returns {Promise<void>}
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
