@@ -136,7 +136,7 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
     const { name, value } = event.target;
 
     setSuccessMessage("");
-    setGame({ ...game, [name]: value });
+    setGame((previousGame) => ({ ...previousGame, [name]: value }));
   };
 
   return (
