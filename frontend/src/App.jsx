@@ -6,6 +6,9 @@ import { getGames, deleteGame } from "./services/gameService";
 function App() {
   const [gameList, setGameList] = useState([]);
   const [gameBeingEdited, setGameBeingEdited] = useState(null);
+  // Muda a cada clique em "Editar" para remontar o formulário, mesmo
+  // quando o jogo clicado é o mesmo.
+  const [formKey, setFormKey] = useState(0);
 
   // Fetch games from backend API
   const fetchGames = async () => {
@@ -20,10 +23,15 @@ function App() {
     fetchGames();
   }, []);
 
-  
+
   const handleDelete = async (idToDelete) => {
     await deleteGame(idToDelete);
     await fetchGames();
+  };
+
+  const handleEdit = (gameToEdit) => {
+    setGameBeingEdited(gameToEdit);
+    setFormKey((key) => key + 1);
   };
 
   return (
@@ -36,14 +44,13 @@ function App() {
             key={game.id}
             game={game}
             onDelete={handleDelete}
-            // Cópia nova a cada clique: mesmo clicando no mesmo jogo, o
-            // formulário é recarregado com os dados originais.
-            onEdit={(gameToEdit) => setGameBeingEdited({ ...gameToEdit })}
+            onEdit={handleEdit}
           />
         ))}
       </div>
       <br />
       <GameForm
+        key={formKey}
         gameBeingEdited={gameBeingEdited}
         onFinish={() => setGameBeingEdited(null)}
         fetchGames={fetchGames}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { createGame, updateGame } from "../services/gameService";
 
 /** Menor ano de lançamento aceito no cadastro. */
@@ -13,33 +13,26 @@ const MAX_YEAR = new Date().getFullYear() + 5;
  * @param {Object} props
  * @param {{id: number, name: string, genre: string, year: number} | null} props.gameBeingEdited
  *   Jogo em edição, ou `null` quando o formulário está no modo de cadastro.
+ *   Só é lido na montagem: para carregar outro jogo, remonte o componente
+ *   alterando a `key`.
  * @param {() => void} props.onFinish
  *   Chamado ao sair do modo de edição (depois de salvar ou ao cancelar).
  * @param {() => Promise<void>} props.fetchGames
  *   Recarrega a lista de jogos depois de salvar.
  */
 export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
+  // O estado inicial vem do jogo em edição. Para trocar de jogo, o pai
+  // remonta o componente mudando a `key` (veja App.jsx).
   const [game, setGame] = useState({
-    name: "",
-    genre: "",
-    year: "",
+    name: gameBeingEdited?.name ?? "",
+    genre: gameBeingEdited?.genre ?? "",
+    year: gameBeingEdited?.year ?? "",
   });
 
   const [submitError, setSubmitError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const nameInputRef = useRef(null);
-
-  useEffect(() => {
-    if (gameBeingEdited) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setGame({
-        name: gameBeingEdited.name,
-        genre: gameBeingEdited.genre,
-        year: gameBeingEdited.year,
-      });
-    }
-  }, [gameBeingEdited]);
 
   // Utils ↓  ↓  ↓  ↓  ↓
 
