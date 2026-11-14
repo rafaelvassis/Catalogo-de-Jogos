@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createGame, updateGame } from "../services/gameService";
 
 /** Menor ano de lançamento aceito no cadastro. */
@@ -15,7 +15,9 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   });
 
   const [submitError, setSubmitError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const nameInputRef = useRef(null);
 
   useEffect(() => {
     if (gameBeingEdited) {
@@ -74,7 +76,8 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
    * Valida e envia o formulário: atualiza o jogo em edição ou cria um novo.
    * Nome e gênero são enviados sem espaços nas pontas e o ano como número.
    * Enquanto a requisição está em andamento, o botão fica desabilitado.
-   * Em caso de sucesso, recarrega a lista e limpa o formulário. 
+   * Em caso de sucesso, recarrega a lista, limpa o formulário, exibe uma
+   * confirmação e devolve o foco ao campo de título.
    * Em caso de falha na API, exibe uma mensagem de erro e mantém os dados digitados.
    *
    * @param {React.SubmitEvent<HTMLFormElement>} event - Evento de envio do formulário.
@@ -86,6 +89,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
     if (!inputValidation(game)) return;
 
     setSubmitError("");
+    setSuccessMessage("");
     setIsSubmitting(true);
 
     // O input guarda o ano como string; a API espera um número.
@@ -103,7 +107,13 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
       }
 
       await fetchGames();
+      setSuccessMessage(
+        gameBeingEdited
+          ? "Jogo atualizado com sucesso."
+          : "Jogo adicionado com sucesso.",
+      );
       resetForm();
+      nameInputRef.current?.focus();
     } catch {
       setSubmitError("Não foi possível salvar o jogo. Tente novamente.");
     } finally {
@@ -114,12 +124,14 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   /** Sai do modo de edição, descartando as alterações e limpando o formulário. */
   const handleCancel = () => {
     setSubmitError("");
+    setSuccessMessage("");
     resetForm();
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
 
+    setSuccessMessage("");
     setGame({ ...game, [name]: value });
   };
 
@@ -131,6 +143,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
           type="text"
           name="name"
           id="name"
+          ref={nameInputRef}
           value={game.name}
           onChange={handleChange}
         />
@@ -174,6 +187,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
       )}
 
       {submitError && <p role="alert">{submitError}</p>}
+      {successMessage && <p role="status">{successMessage}</p>}
     </form>
   );
 }
