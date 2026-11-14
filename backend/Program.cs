@@ -6,12 +6,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// Origens do frontend liberadas no CORS, separadas por vírgula.
+// Em produção, defina CORS_ORIGINS com o endereço do site publicado
+// (ex.: https://meu-catalogo.vercel.app). Padrão: 5173 = npm run dev,
+// 4173 = npm run preview.
+var allowedOrigins = (builder.Configuration["CORS_ORIGINS"]
+        ?? "http://localhost:5173,http://localhost:4173")
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    .Select(origin => origin.TrimEnd('/'))
+    .ToArray();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
-        // 5173: npm run dev | 4173: npm run preview (build de produção local)
-        policy.WithOrigins("http://localhost:5173", "http://localhost:4173")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
