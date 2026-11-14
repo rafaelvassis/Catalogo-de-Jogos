@@ -8,6 +8,8 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
     year: "",
   });
 
+  const [submitError, setSubmitError] = useState("");
+
   useEffect(() => {
     if (gameBeingEdited) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -49,14 +51,20 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
 
     if (!inputValidation(game)) return;
 
-    if (gameBeingEdited) {
-      await updateGame(gameBeingEdited.id, game);
-    } else {
-      await createGame(game);
-    }
+    setSubmitError("");
 
-    await fetchGames();
-    resetForm();
+    try {
+      if (gameBeingEdited) {
+        await updateGame(gameBeingEdited.id, game);
+      } else {
+        await createGame(game);
+      }
+
+      await fetchGames();
+      resetForm();
+    } catch {
+      setSubmitError("Não foi possível salvar o jogo. Tente novamente.");
+    }
   };
 
   const handleChange = (event) => {
@@ -101,6 +109,8 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
       <button type="submit">
         {gameBeingEdited ? "Atualizar Jogo" : "Adicionar Jogo"}
       </button>
+
+      {submitError && <p role="alert">{submitError}</p>}
     </form>
   );
 }
