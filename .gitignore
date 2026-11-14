@@ -13,3 +13,8 @@ obj/
 # OS
 .DS_Store
 Thumbs.db
+
+# Variáveis de ambiente (segredos): só o .env.example é versionado
+.env
+.env.*
+!.env.example
