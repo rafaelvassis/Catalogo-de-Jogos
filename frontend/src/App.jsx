@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { GameForm } from "./components/GameForm";
 import { GameCard } from "./components/GameCard";
 import { getGames, deleteGame } from "./services/gameService";
+import "./App.css";
 
 function App() {
   const [gameList, setGameList] = useState([]);
@@ -32,29 +33,64 @@ function App() {
   const handleEdit = (gameToEdit) => {
     setGameBeingEdited(gameToEdit);
     setFormKey((key) => key + 1);
+
+    // No celular o formulário fica acima da lista: leva o usuário até ele.
+    // Se já estiver visível (tela larga), não rola.
+    document
+      .getElementById("game-form")
+      ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
   return (
     <>
-      <h1>Catálogo de Jogos</h1>
+      <header className="topbar">
+        <div className="topbar__inner">
+          <span className="topbar__brand">Catálogo de Jogos</span>
 
-      <div>
-        {gameList.map((game) => (
-          <GameCard
-            key={game.id}
-            game={game}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
+          <a className="btn btn--primary btn--small" href="#game-form">
+            Adicionar jogo
+          </a>
+        </div>
+      </header>
+
+      <div className="app">
+        <div className="page-header">
+          <h1 id="page-title">Meus jogos</h1>
+          <p className="page-header__count">
+            Mostrando {gameList.length} {gameList.length === 1 ? "jogo" : "jogos"}.
+          </p>
+        </div>
+
+        <main className="layout">
+          <GameForm
+            key={formKey}
+            gameBeingEdited={gameBeingEdited}
+            onFinish={() => setGameBeingEdited(null)}
+            fetchGames={fetchGames}
           />
-        ))}
+
+          <section className="games" aria-labelledby="page-title">
+            {gameList.length === 0 ? (
+              <p className="games__empty">
+                Nenhum jogo cadastrado ainda. Use o formulário para adicionar
+                o primeiro!
+              </p>
+            ) : (
+              <ul className="games__list">
+                {gameList.map((game) => (
+                  <li key={game.id}>
+                    <GameCard
+                      game={game}
+                      onDelete={handleDelete}
+                      onEdit={handleEdit}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </main>
       </div>
-      <br />
-      <GameForm
-        key={formKey}
-        gameBeingEdited={gameBeingEdited}
-        onFinish={() => setGameBeingEdited(null)}
-        fetchGames={fetchGames}
-      />
     </>
   );
 }

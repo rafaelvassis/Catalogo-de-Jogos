@@ -176,13 +176,19 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
 
   return (
     // noValidate: as mensagens de erro são exibidas pelo próprio componente.
-    <form onSubmit={handleSubmit} noValidate aria-labelledby="game-form-title">
-      <h2 id="game-form-title">
+    <form
+      id="game-form"
+      className={`game-form${gameBeingEdited ? " game-form--editing" : ""}`}
+      onSubmit={handleSubmit}
+      noValidate
+      aria-labelledby="game-form-title"
+    >
+      <h2 id="game-form-title" className="game-form__title">
         {gameBeingEdited ? "Editar jogo" : "Novo jogo"}
       </h2>
 
-      <div>
-        <label htmlFor="name">Título </label>
+      <div className="field">
+        <label htmlFor="name">Título</label>
         <input
           type="text"
           name="name"
@@ -195,11 +201,15 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
           aria-invalid={Boolean(fieldErrors.name)}
           aria-describedby={fieldErrors.name ? "name-error" : undefined}
         />
-        {fieldErrors.name && <p id="name-error" role="alert">{fieldErrors.name}</p>}
+        {fieldErrors.name && (
+          <p id="name-error" className="field__error" role="alert">
+            {fieldErrors.name}
+          </p>
+        )}
       </div>
 
-      <div>
-        <label htmlFor="genre">Gênero </label>
+      <div className="field">
+        <label htmlFor="genre">Gênero</label>
         <select
           name="genre"
           id="genre"
@@ -216,10 +226,15 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
             </option>
           ))}
         </select>
-        {fieldErrors.genre && <p id="genre-error" role="alert">{fieldErrors.genre}</p>}
+        {fieldErrors.genre && (
+          <p id="genre-error" className="field__error" role="alert">
+            {fieldErrors.genre}
+          </p>
+        )}
       </div>
-      <div>
-        <label htmlFor="year">Ano </label>
+
+      <div className="field">
+        <label htmlFor="year">Ano</label>
         <input
           type="number"
           name="year"
@@ -234,24 +249,48 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
           aria-invalid={Boolean(fieldErrors.year)}
           aria-describedby={fieldErrors.year ? "year-error" : undefined}
         />
-        {fieldErrors.year && <p id="year-error" role="alert">{fieldErrors.year}</p>}
+        {fieldErrors.year && (
+          <p id="year-error" className="field__error" role="alert">
+            {fieldErrors.year}
+          </p>
+        )}
       </div>
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? "Salvando..."
-          : gameBeingEdited
-            ? "Atualizar Jogo"
-            : "Adicionar Jogo"}
-      </button>
 
-      {gameBeingEdited && (
-        <button type="button" onClick={handleCancel} disabled={isSubmitting}>
-          Cancelar
+      <div className="form-actions">
+        <button
+          type="submit"
+          className="btn btn--primary"
+          disabled={isSubmitting}
+        >
+          {isSubmitting
+            ? "Salvando..."
+            : gameBeingEdited
+              ? "Atualizar Jogo"
+              : "Adicionar Jogo"}
         </button>
-      )}
 
-      {submitError && <p role="alert">{submitError}</p>}
-      {successMessage && <p role="status">{successMessage}</p>}
+        {gameBeingEdited && (
+          <button
+            type="button"
+            className="btn btn--secondary"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+          >
+            Cancelar
+          </button>
+        )}
+      </div>
+
+      {submitError && (
+        <p className="form-message form-message--error" role="alert">
+          {submitError}
+        </p>
+      )}
+      {successMessage && (
+        <p className="form-message form-message--success" role="status">
+          {successMessage}
+        </p>
+      )}
     </form>
   );
 }
