@@ -160,6 +160,8 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
           type="text"
           name="name"
           id="name"
+          required
+          autoComplete="off"
           ref={nameInputRef}
           value={game.name}
           onChange={handleChange}
@@ -175,6 +177,8 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
           type="text"
           name="genre"
           id="genre"
+          required
+          autoComplete="off"
           value={game.genre}
           onChange={handleChange}
           aria-invalid={Boolean(fieldErrors.genre)}
@@ -188,6 +192,8 @@ export function GameForm({ gameBeingEdited, onFinish, fetchGames }) {
           type="number"
           name="year"
           id="year"
+          required
+          autoComplete="off"
           min={MIN_YEAR}
           max={MAX_YEAR}
           step={1}
