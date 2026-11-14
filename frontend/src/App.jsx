@@ -36,7 +36,9 @@ function App() {
             key={game.id}
             game={game}
             onDelete={handleDelete}
-            onEdit={setGameBeingEdited}
+            // Cópia nova a cada clique: mesmo clicando no mesmo jogo, o
+            // formulário é recarregado com os dados originais.
+            onEdit={(gameToEdit) => setGameBeingEdited({ ...gameToEdit })}
           />
         ))}
       </div>
